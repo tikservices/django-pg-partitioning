@@ -32,6 +32,10 @@ def create_model(self, model):
             so its properties are turned off."""
             meta.pk.primary_key = False
             logger.info("Note that PK constraints for %s has been temporarily closed.", meta.label)
+        for field in meta.local_fields:
+            if field.name != key and field.unique:
+                field.unique = False
+                logger.info("Note that UNIQUE constraints for %s.%s has been temporarily closed.", meta.label, field.name)
     else:
         DatabaseSchemaEditor.sql_create_table = default_sql_create_table
     default_create_model_method(self, model)
